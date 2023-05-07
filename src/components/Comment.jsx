@@ -1,32 +1,60 @@
 import { ThumbsUp, Trash } from 'phosphor-react';
 import styles from './Comment.module.css';
 import { Avatar } from './Avatar';
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
-export function Comment() {
+export function Comment({
+  id,
+  publishedAt,
+  author,
+  comment,
+  applauses,
+  onDeleteComment,
+  onAddApplause,
+}) {
+
+  const handleDeleteComment = () => {
+    onDeleteComment(id)
+  }
+
+  const handleAddApplause = () => {
+    onAddApplause(id)
+  }
+
+  const publishedAtFormatted = format(publishedAt, "d 'de' LLLL 'às' HH:mm'h'", {
+    locale: ptBR,
+  })
+
+  const publishedDateFromNow = formatDistanceToNow(publishedAt, {
+    addSuffix: true,
+    locale: ptBR,
+  })
+
   return (
     <div className={styles.comment}>
       <Avatar
-        src="https://github.com/jersonsatoru.png"
+        src={author.avatar}
         hasBorder={false}
       />
       <div className={styles.commentBox}>
         <div className={styles.commentContent}>
           <header>
             <div className={styles.authorAndTime}>
-              <strong>Jerson Satoru Uyekita</strong>
-              <time title="20/01/2023">Cerca de 2h atrás</time>
+              <strong>{author.name}</strong>
+              <time title={publishedAtFormatted}>{publishedDateFromNow}</time>
             </div>
-            <button title="Deletar comnetário">
+            <button onClick={handleDeleteComment} title="Deletar comnetário">
               <Trash size={24} />
             </button>
           </header>
-          <p>Muito bom Devon, parabéns!</p>
+          <p>{comment}</p>
         </div>
         <footer>
-          <button>
+          <button onClick={handleAddApplause}>
             <ThumbsUp />
             Aplaudir
-            <span>20</span>
+            <span>{applauses}</span>
           </button>
         </footer>
       </div>
